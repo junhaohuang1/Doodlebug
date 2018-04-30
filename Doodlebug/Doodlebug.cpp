@@ -7,37 +7,39 @@ Doodlebug::Doodlebug(int rowVal, int colVal) :Organism(rowVal, colVal, DOODLEBUG
 }
 
 void Doodlebug::move(Organism * ecosystem[ECOSYSTEM_ROW_MAX_VAL][ECOSYSTEM_COL_MAX_VAL])
-{
+{	
+	int currRowVal = getRowVal();
+	int currColVal = getColVal();
+	int newRowVal = getRowVal();
+	int newColVal = getColVal();
 	vector<string> antAdjacentCoordinates = getAdjacentAntCoordinates(ecosystem);
 	if (antAdjacentCoordinates.size() > 0) {
-		int currRowVal = getRowVal();
-		int currColVal = getColVal();
-		int newRowVal = getRowVal();
-		int newColVal = getColVal();
-		updateCoordinates(antAdjacentCoordinates, newRowVal, newColVal);
-		delete ecosystem[newRowVal][newColVal];
-		ecosystem[newRowVal][newColVal] = this;
-		ecosystem[currRowVal][currColVal] = NULL;
-		delete ecosystem[currRowVal][currColVal];
 		setStepsWithoutFood(0);
+		starve(ecosystem);
+		updateCoordinates(antAdjacentCoordinates, newRowVal, newColVal);
+		setRowVal(newRowVal);
+		setColVal(newColVal);
+		delete ecosystem[newRowVal][newColVal];
+		ecosystem[currRowVal][currColVal] = NULL;
+		ecosystem[newRowVal][newColVal] = this;
+		
 	}
 	else {
 		vector<string> emptyAdjacentCoordinates = getEmptyAdjacentCoordinates(ecosystem);
 		if (emptyAdjacentCoordinates.size() > 0) {
-			int currRowVal = getRowVal();
-			int currColVal = getColVal();
-			int newRowVal = getRowVal();
-			int newColVal = getColVal();
-			updateCoordinates(emptyAdjacentCoordinates, newRowVal, newColVal);
-			ecosystem[newRowVal][newColVal] = this;
-			ecosystem[currRowVal][currColVal] = NULL;
-			delete ecosystem[currRowVal][currColVal];
 			incrementstepsWithoutFood();
+			updateCoordinates(emptyAdjacentCoordinates, newRowVal, newColVal);
+			setRowVal(newRowVal);
+			setColVal(newColVal);
+			ecosystem[newRowVal][newColVal] = new Doodlebug(newRowVal, newColVal);
+			*(ecosystem[newRowVal][newColVal]) = *(this);
+			ecosystem[currRowVal][currColVal] = NULL;
 		}
 	}
-	starve(ecosystem);
-	incrementStepsSurvived();
-	breed(ecosystem);
+	if (ecosystem[getRowVal()][getColVal()] != NULL) {
+		ecosystem[getRowVal()][getColVal()] ->incrementStepsSurvived();
+		ecosystem[getRowVal()][getColVal()] ->breed(ecosystem);
+	}
 }
 
 

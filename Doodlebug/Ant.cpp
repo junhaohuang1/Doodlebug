@@ -17,9 +17,10 @@ void Ant::move(Organism * ecosystem[ECOSYSTEM_ROW_MAX_VAL][ECOSYSTEM_COL_MAX_VAL
 		int newRowVal = getRowVal();
 		int newColVal = getColVal();
 		updateCoordinates(emptyAdjacentCoordinates, newRowVal, newRowVal);
-		ecosystem[newRowVal][newColVal] = this;
+		setRowVal(newRowVal);
+		setColVal(newColVal);
 		ecosystem[currRowVal][currColVal] = NULL;
-		delete ecosystem[currRowVal][currColVal];
+		ecosystem[newRowVal][newColVal] = this;
 	}
 	incrementStepsSurvived();
 	breed(ecosystem);
